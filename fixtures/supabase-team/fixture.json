@@ -1,0 +1,12 @@
+{
+  "about": "A single-workspace intranet. Its facts are judged a second time as \"tenancy\": \"single\".",
+  "checker": "check-team.mjs",
+  "replays": [
+    {
+      "suffix": "single",
+      "hints": {
+        "tenancy": "single"
+      }
+    }
+  ]
+}

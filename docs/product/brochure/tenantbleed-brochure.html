@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>tenantbleed brochure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Two quiet A4 pages: one message, three benefits, three steps, one call to action. */
+  :root {
+    --ink: #13212b;
+    --ink-2: #4a5964;
+    --line: #d9e1e6;
+    --paper: #ffffff;
+    --desk: #eef2f4;
+    --accent: #0f6b5c;
+    --accent-soft: #e5f2ef;
+    --serif: "Fraunces", Georgia, "Times New Roman", serif;
+    --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { margin: 0; background: var(--desk); color: var(--ink); font-family: var(--sans); font-size: 10.5pt; line-height: 1.5; }
+  p { margin: 0; }
+
+  .sheet {
+    width: 210mm; min-height: 297mm; margin: 10mm auto; padding: 16mm 18mm 12mm;
+    background: var(--paper); box-shadow: 0 1px 4px rgba(19, 33, 43, .14);
+    display: flex; flex-direction: column;
+  }
+  .brand { font-weight: 600; font-size: 12pt; letter-spacing: -0.01em; }
+  .brand span { color: var(--accent); }
+  .eyebrow { margin-top: 22mm; font-size: 9pt; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+  h1 { font-family: var(--serif); font-weight: 650; font-size: 34pt; line-height: 1.06; letter-spacing: -0.02em; margin: 4mm 0 6mm; max-width: 160mm; text-wrap: balance; }
+  .lede { font-size: 13pt; line-height: 1.5; color: var(--ink-2); max-width: 150mm; }
+
+  .contrast { margin: 16mm 0 0; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8mm; padding: 9mm 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .contrast .side { text-align: center; }
+  .contrast .num { font-family: var(--serif); font-weight: 650; font-size: 40pt; line-height: 1; letter-spacing: -0.02em; }
+  .contrast .num.many { color: var(--ink-2); }
+  .contrast .num.few { color: var(--accent); }
+  .contrast .cap { margin-top: 2mm; font-size: 10pt; color: var(--ink-2); }
+  .contrast .arrow { font-size: 20pt; color: var(--line); }
+  .contrast-note { margin-top: 3mm; font-size: 9pt; color: var(--ink-2); text-align: center; }
+
+  .problem { margin-top: 14mm; max-width: 155mm; }
+  h2 { font-family: var(--serif); font-weight: 650; font-size: 18pt; line-height: 1.15; letter-spacing: -0.01em; margin: 0 0 3mm; text-wrap: balance; }
+  .problem p { color: var(--ink-2); font-size: 11pt; }
+
+  .foot { margin-top: auto; padding-top: 6mm; display: flex; justify-content: space-between; font-size: 8.5pt; color: var(--ink-2); }
+
+  /* Page 2 */
+  .benefits { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8mm; margin-top: 8mm; }
+  .benefit h3 { font-family: var(--serif); font-weight: 650; font-size: 14pt; line-height: 1.2; margin: 0 0 2.5mm; }
+  .benefit p { color: var(--ink-2); font-size: 10pt; }
+  .benefit .proof { margin-top: 3.5mm; padding-top: 3mm; border-top: 2px solid var(--accent); font-size: 9.5pt; color: var(--ink); }
+  .benefit .proof b { color: var(--accent); }
+
+  .how { margin-top: 13mm; }
+  .steps { list-style: none; padding: 0; margin: 4mm 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8mm; counter-reset: step; }
+  .steps li { counter-increment: step; font-size: 10pt; color: var(--ink-2); }
+  .steps li::before { content: counter(step); display: inline-grid; place-items: center; width: 7mm; height: 7mm; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-weight: 600; font-size: 9.5pt; margin-bottom: 2.5mm; }
+  .steps b { display: block; color: var(--ink); font-size: 10.5pt; margin-bottom: 1mm; }
+  .safe { margin-top: 5mm; font-size: 9.5pt; color: var(--ink-2); }
+  .safe b { color: var(--ink); }
+
+  .who { margin-top: 12mm; display: grid; grid-template-columns: 1fr 1fr; gap: 8mm; }
+  .who div { background: var(--accent-soft); padding: 6mm 7mm; }
+  .who h3 { font-size: 10.5pt; font-weight: 600; margin: 0 0 1.5mm; color: var(--accent); }
+  .who p { font-size: 10.5pt; }
+
+  .cta { margin-top: 12mm; background: var(--ink); color: #fff; padding: 9mm 10mm; display: grid; grid-template-columns: 1fr auto; gap: 8mm; align-items: center; }
+  .cta h2 { color: #fff; margin: 0 0 2mm; font-size: 20pt; }
+  .cta p { color: #c6d1d8; font-size: 10.5pt; }
+  .cta .contact { border: 1.5px solid #fff; padding: 3mm 6mm; font-weight: 600; white-space: nowrap; }
+  .price { margin-top: 4mm; font-size: 9pt; color: var(--ink-2); }
+
+  @page { size: A4; margin: 0; }
+  @media print {
+    body { background: #fff; }
+    .sheet { margin: 0; box-shadow: none; height: 297mm; min-height: 0; overflow: hidden; break-after: page; page-break-after: always; }
+    .sheet:last-child { break-after: auto; page-break-after: auto; }
+  }
+  @media screen and (max-width: 860px) {
+    body { font-size: 16px; background: var(--paper); }
+    .sheet { width: auto; min-height: 0; margin: 0; padding: 28px max(18px, env(safe-area-inset-right, 0px)) 32px max(18px, env(safe-area-inset-left, 0px)); box-shadow: none; }
+    .sheet + .sheet { border-top: 1px solid var(--line); }
+    .eyebrow { margin-top: 36px; font-size: 12px; }
+    h1 { font-size: 36px; }
+    .lede { font-size: 18px; }
+    .contrast { grid-template-columns: 1fr; gap: 10px; margin-top: 32px; }
+    .contrast .arrow { transform: rotate(90deg); }
+    .contrast .num { font-size: 48px; }
+    .contrast .cap, .contrast-note { font-size: 14px; }
+    .problem { margin-top: 32px; }
+    h2 { font-size: 24px; }
+    .problem p, .benefit p, .steps li, .who p, .cta p { font-size: 16px; }
+    .benefits, .steps, .who { grid-template-columns: 1fr; gap: 24px; }
+    .benefit h3 { font-size: 20px; }
+    .benefit .proof, .safe, .price { font-size: 14px; }
+    .cta { grid-template-columns: 1fr; padding: 24px; }
+    .cta h2 { font-size: 26px; }
+    .cta .contact { justify-self: start; }
+    .foot { font-size: 12px; padding-top: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<article class="sheet">
+  <div class="brand">tenant<span>bleed</span></div>
+
+  <p class="eyebrow">For teams shipping on Supabase</p>
+  <h1>Find out if one customer can see another customer's data. Before you ship.</h1>
+  <p class="lede">tenantbleed signs in to your app as real users and tries to break into each other's data. You run one command on your own machine. If it gets in, you see exactly how, with a fix that is already tested.</p>
+
+  <div class="contrast" role="img" aria-label="On one real app, 422 linter warnings became 17 proven problems.">
+    <div class="side"><div class="num many">422</div><div class="cap">warnings from a linter</div></div>
+    <div class="arrow" aria-hidden="true">&#8594;</div>
+    <div class="side"><div class="num few">17</div><div class="cap">real problems, proven and ready to fix</div></div>
+  </div>
+  <p class="contrast-note">One real app, scanned with tenantbleed.</p>
+
+  <section class="problem">
+    <h2>Your app can work perfectly and still leak.</h2>
+    <p>In a Supabase app, a few lines of database rules decide who sees what. Miss one condition and any signed-in user, or anyone at all, can read or change your customers' data. Every screen still works, so tests and code review miss it. AI app builders write these rules fast, and linters answer with a long list of maybes. tenantbleed tells you which ones are real.</p>
+  </section>
+
+  <footer class="foot"><span>tenantbleed</span><span>Free and open source</span></footer>
+</article>
+
+<article class="sheet">
+  <div class="brand">tenant<span>bleed</span></div>
+
+  <div class="benefits">
+    <div class="benefit">
+      <h3>Proof, not warnings</h3>
+      <p>Every finding is an attack that worked, confirmed in the database. No list of maybes to work through.</p>
+      <p class="proof">In side-by-side tests, tenantbleed proved <b>16 of 18</b> known issues. Six other tools proved none.</p>
+    </div>
+    <div class="benefit">
+      <h3>Found before your customers find it</h3>
+      <p>Run it before you ship, so a leak is caught on your machine, not in a support ticket or a headline.</p>
+      <p class="proof">Of 31 open-source Supabase apps we ran, <b>more than 1 in 3</b> had a real, proven data leak.</p>
+    </div>
+    <div class="benefit">
+      <h3>Fixed, not just found</h3>
+      <p>Each fix is tested before you see it: the attack is blocked and your users keep the access they had.</p>
+      <p class="proof"><b>24 of 24</b> proposed fixes passed that test in our trials.</p>
+    </div>
+  </div>
+
+  <section class="how">
+    <h2>Run it in minutes</h2>
+    <ol class="steps">
+      <li><b>Run one command</b>with your local stack running: <code>npx tenantbleed ui</code> in your project.</li>
+      <li><b>It attacks a throwaway copy</b>building a fresh copy of your app, creating two real users and attacking across them, in about a minute.</li>
+      <li><b>Read the result</b>in plain English in the terminal and the local web UI, with the fix and a prompt for your AI tool.</li>
+    </ol>
+    <p class="safe"><b>Safe by design.</b> It runs entirely on your own machine, only on a throwaway copy of your app. Nothing is sent off the box, and it never touches production or your real users.</p>
+  </section>
+
+  <div class="who">
+    <div>
+      <h3>For founders</h3>
+      <p>Launch without guessing whether one customer can reach another's data.</p>
+    </div>
+    <div>
+      <h3>For agencies</h3>
+      <p>Hand every client a report that shows how their customers' data was tested, and what was fixed.</p>
+    </div>
+  </div>
+
+  <div class="cta">
+    <div>
+      <h2>Get your first report</h2>
+      <p>Bring one Supabase project. See what one user can do to another before your users do.</p>
+    </div>
+    <div class="contact">[contact]</div>
+  </div>
+  <p class="price">Free and open source. It runs entirely on your own machine: no account, no sign-up, nothing sent off the box.</p>
+
+  <footer class="foot"><span>tenantbleed</span><span>Free and open source</span></footer>
+</article>
+
+</body>
+</html>

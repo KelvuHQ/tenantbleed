@@ -1,0 +1,25 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - run: npm ci
+      - name: Typecheck, bundle the CLI, build the UI
+        run: npm run build
+      - name: Unit tests
+        run: npm test
+
+  # The planted-fixture suite (npm run test:fixtures) starts a local Supabase stack per fixture
+  # with Docker and the Supabase CLI. It is the real correctness gate and runs locally before a
+  # release; wiring it into CI needs the Supabase CLI and several Docker stacks, tracked separately.

@@ -1,0 +1,4 @@
+{
+  "about": "An app that lists another schema before public in [api] schemas: requests that name no schema go to that one.",
+  "checker": "check-schemas.mjs"
+}

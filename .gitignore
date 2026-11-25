@@ -1,0 +1,22 @@
+node_modules/
+.env
+fixtures/**/supabase/.branches
+fixtures/**/supabase/.temp
+tenantbleed-report.*
+
+# Results with real data never go in git: scan reports, fix runs, field-test output,
+# disclosure drafts and market notes. Docs describe apps by type only.
+tenantbleed-fixes/
+tenantbleed-fix-verify/
+*.report.json
+corpus*/
+fixlab*/
+fixfx*/
+results/
+disclosures/
+market/
+*.err
+*.start.log
+dist/
+dist-test/
+.DS_Store

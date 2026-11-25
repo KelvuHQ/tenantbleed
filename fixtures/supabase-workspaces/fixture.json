@@ -1,0 +1,4 @@
+{
+  "about": "Personal and team workspaces: a row that must agree with two parents on the workspace (row/composite-keys, row/helper-parent).",
+  "checker": "check-workspaces.mjs"
+}

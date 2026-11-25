@@ -1,0 +1,4 @@
+{
+  "about": "An app that exposes the Supabase-managed auth schema in [api] schemas and grants authenticated a read on auth.users. The builder must never write to auth's tables; auth.users keeps RLS on, so the exposure leaks nothing and no finding is invented.",
+  "checker": "check-managed.mjs"
+}

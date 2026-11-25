@@ -1,0 +1,10 @@
+tenantbleed
+Copyright 2026 The tenantbleed Authors
+
+Licensed under the GNU Affero General Public License, version 3 or later (see LICENSE.md).
+
+Commercial licensing, to use tenantbleed without the AGPL obligations, is available:
+kelvu.sec@gmail.com
+
+This product vendors Supabase splinter (the Supabase database linter),
+which is licensed under the PostgreSQL License (see src/lint/SPLINTER-LICENSE).

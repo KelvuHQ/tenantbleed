@@ -1,0 +1,37 @@
+#!/bin/bash
+# Block a commit whose staged changes contain a scanned app's real name or owner. Corpus app names
+# never go in the repo (code, fixtures, tests, commit messages, docs). The name list comes from the
+# lab mapping; if the lab is absent (CI, another machine) the hook passes, since there is nothing to
+# leak there. Bypass for a false positive with: git commit --no-verify.
+set -u
+MAP="${TENANTBLEED_LAB_DATA:-$HOME/Projects/tenantbleed-lab-data}/mapping.tsv"
+[ -f "$MAP" ] || exit 0
+
+# Distinctive identifiers to forbid: the full "owner-repo" real name, the GitHub owner, and the
+# owner/repo path. NOT the bare repo-name on its own (it is often a generic word like "studio",
+# "platform" or "carbon" that collides with ordinary code and names no app by itself). Also drop
+# short or common tokens. A leak that matters names the owner or the full name, which stay checked.
+names=$(awk -F'\t' 'NR>1{print $2; if ($4 ~ /github.com/){n=$4; sub(/.*github.com\//,"",n); sub(/\.git$/,"",n); split(n,a,"/"); print a[1]; print n}}' "$MAP" \
+  | tr '[:upper:]' '[:lower:]' | sort -u | awk 'length($0) >= 6 && $0 !~ /^(https?|github|supabase|example|studio|platform|carbon|member|public|account|project|events|reports|invoices|database|schemas|collect|family-tree)$/')
+
+# Staged added lines (new content only), excluding dist/ (minified bundle) and the hook itself.
+added=$(git diff --cached --unified=0 --no-color -- . ':(exclude)dist/*' ':(exclude)scripts/hooks/*' | grep '^+' | grep -v '^+++' | tr '[:upper:]' '[:lower:]')
+[ -n "$added" ] || exit 0
+
+hits=""
+while IFS= read -r n; do
+  [ -z "$n" ] && continue
+  # word-ish boundary match so "studio" inside "studios" is not a hit, but "acme1234-widgets.io" is
+  if printf '%s\n' "$added" | grep -qiE "(^|[^a-z0-9])$(printf '%s' "$n" | sed 's/[.[\*^$()+?{|]/\\&/g')([^a-z0-9]|$)"; then
+    hits="$hits $n"
+  fi
+done <<< "$names"
+
+if [ -n "$hits" ]; then
+  echo "pre-commit: staged changes contain scanned app name(s) or owner(s):" >&2
+  for h in $hits; do echo "  - $h" >&2; done
+  echo "Corpus app names must not enter the repo. Use App-N ids or a generic descriptor." >&2
+  echo "If this is a false positive, re-run with: git commit --no-verify" >&2
+  exit 1
+fi
+exit 0

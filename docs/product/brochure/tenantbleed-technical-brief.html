@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>tenantbleed technical brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,650&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  /* Same family as the sales brochure, denser: for CTOs, security leads and agency tech leads. */
+  :root {
+    --ink: #13212b;
+    --ink-2: #4a5964;
+    --line: #d9e1e6;
+    --paper: #ffffff;
+    --desk: #eef2f4;
+    --accent: #0f6b5c;
+    --accent-soft: #e5f2ef;
+    --code: #f4f6f7;
+    --serif: "Fraunces", Georgia, "Times New Roman", serif;
+    --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { margin: 0; background: var(--desk); color: var(--ink); font-family: var(--sans); font-size: 9pt; line-height: 1.45; }
+  p { margin: 0 0 2mm; }
+  code { font-family: var(--mono); font-size: 0.9em; }
+
+  .sheet { width: 210mm; min-height: 297mm; margin: 10mm auto; padding: 12mm 16mm 8mm; background: var(--paper); box-shadow: 0 1px 4px rgba(19, 33, 43, .14); display: flex; flex-direction: column; }
+  .top { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 3mm; border-bottom: 1px solid var(--line); margin-bottom: 6mm; }
+  .brand { font-weight: 600; font-size: 11pt; }
+  .brand span { color: var(--accent); }
+  .doc { font-size: 8pt; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); }
+
+  h1 { font-family: var(--serif); font-weight: 650; font-size: 23pt; line-height: 1.1; letter-spacing: -0.015em; margin: 0 0 3mm; text-wrap: balance; }
+  .lede { font-size: 10.5pt; color: var(--ink-2); max-width: 165mm; margin-bottom: 5mm; }
+  h2 { font-family: var(--serif); font-weight: 650; font-size: 13pt; line-height: 1.2; margin: 0 0 2.5mm; text-wrap: balance; }
+  h3 { font-size: 9.5pt; font-weight: 600; margin: 0 0 1mm; }
+  .muted { color: var(--ink-2); }
+  .small { font-size: 7.8pt; color: var(--ink-2); }
+  section + section { margin-top: 5mm; }
+
+  .flow { list-style: none; padding: 0; margin: 0 0 1mm; display: grid; grid-template-columns: repeat(5, 1fr); gap: 3mm; counter-reset: s; }
+  .flow li { counter-increment: s; border-top: 2px solid var(--accent); padding-top: 2mm; font-size: 8.3pt; color: var(--ink-2); }
+  .flow li::before { content: counter(s); font-weight: 600; color: var(--accent); margin-right: 1.5mm; }
+  .flow b { color: var(--ink); }
+
+  .wrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 8.3pt; }
+  th, td { text-align: left; padding: 1.5mm 2mm 1.5mm 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 7.5pt; font-weight: 600; color: var(--ink-2); text-transform: uppercase; letter-spacing: 0.05em; }
+  td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  tr.us td { font-weight: 600; }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 9mm; }
+  .two > * { min-width: 0; }
+
+  .box { background: var(--accent-soft); padding: 4mm 5mm; }
+  .box p:last-child { margin-bottom: 0; }
+
+  pre { margin: 0; background: var(--code); padding: 3mm 4mm; font-family: var(--mono); font-size: 7.6pt; line-height: 1.5; white-space: pre; overflow-x: auto; }
+  pre .c { color: var(--ink-2); }
+
+  ul.plain { list-style: none; padding: 0; margin: 0; }
+  ul.plain li { padding-left: 3.5mm; position: relative; margin-bottom: 1.2mm; }
+  ul.plain li::before { content: ""; position: absolute; left: 0; top: 1.9mm; width: 1.4mm; height: 1.4mm; background: var(--accent); }
+
+  .bars { margin: 2mm 0 1mm; }
+  .bar { display: grid; grid-template-columns: 34mm 1fr 7mm; gap: 2mm; align-items: center; font-size: 8pt; margin-bottom: 1.2mm; }
+  .bar .t { height: 3mm; background: var(--line); position: relative; }
+  .bar .f { position: absolute; inset: 0 auto 0 0; background: var(--ink-2); }
+  .bar.us .f { background: var(--accent); }
+  .bar .v { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .bar.zero .t { background: transparent; border-left: 1.5px solid var(--ink-2); }
+
+  .foot { margin-top: auto; padding-top: 3mm; display: flex; justify-content: space-between; font-size: 7.8pt; color: var(--ink-2); }
+
+  @page { size: A4; margin: 0; }
+  @media print {
+    body { background: #fff; }
+    .sheet { margin: 0; box-shadow: none; height: 297mm; min-height: 0; overflow: hidden; break-after: page; page-break-after: always; }
+    .sheet:last-child { break-after: auto; page-break-after: auto; }
+  }
+  @media screen and (max-width: 860px) {
+    body { font-size: 15px; background: var(--paper); }
+    .sheet { width: auto; min-height: 0; margin: 0; padding: 24px max(16px, env(safe-area-inset-right, 0px)) 28px max(16px, env(safe-area-inset-left, 0px)); box-shadow: none; }
+    .sheet + .sheet { border-top: 1px solid var(--line); }
+    h1 { font-size: 30px; }
+    .lede { font-size: 17px; }
+    h2 { font-size: 21px; }
+    h3 { font-size: 15px; }
+    .flow { grid-template-columns: 1fr; gap: 12px; }
+    .flow li, table, .bar, ul.plain li { font-size: 14px; }
+    th { font-size: 12px; }
+    .two { grid-template-columns: 1fr; gap: 24px; }
+    .bar { grid-template-columns: 130px 1fr 28px; }
+    .bar .t { height: 12px; }
+    pre { font-size: 12px; }
+    .small { font-size: 13px; }
+    .foot { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<article class="sheet">
+  <header class="top"><div class="brand">tenant<span>bleed</span></div><div class="doc">Technical brief</div></header>
+
+  <h1>How tenantbleed proves tenant isolation in Supabase apps</h1>
+  <p class="lede">A Supabase app's access control lives in Postgres row level security, functions and storage policies, called straight from the browser. tenantbleed tests that layer the way an attacker would: with real accounts, through the same APIs, on a throwaway copy of your app. A finding exists only when an attack worked.</p>
+
+  <section>
+    <h2>What happens in a scan</h2>
+    <ol class="flow">
+      <li><b>Build a copy.</b> A local Supabase stack from your repository's migrations, in CI or on a laptop.</li>
+      <li><b>Read the schema.</b> Tables, policies, grants, functions, buckets, and who owns each row.</li>
+      <li><b>Create two tenants.</b> Two real test users, each with their own data, plus an anonymous visitor.</li>
+      <li><b>Attack.</b> Each actor tries to reach the other's data through the REST API, functions and storage.</li>
+      <li><b>Confirm and clean up.</b> Every hit is confirmed in the database, then everything the scan changed is undone.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>What it covers</h2>
+    <div class="two">
+      <div>
+        <ul class="plain">
+          <li><b>Every way in:</b> tables, views, functions and storage buckets, through the same APIs your app's browser uses.</li>
+          <li><b>Every kind of harm:</b> reading, changing, deleting or adding to another customer's data, and acting in another user's name.</li>
+          <li><b>Every kind of attacker:</b> another signed-in customer, and anyone on the internet without an account.</li>
+        </ul>
+      </div>
+      <div class="box">
+        <p><b>Proven means confirmed.</b> A finding counts only when the database shows the attack worked. A response code is never enough on its own.</p>
+        <p class="muted">Data that is public by design, such as a product catalog or public profiles, is recognised and reported lower, with the reason.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="two">
+    <div>
+      <h2>What you get</h2>
+      <ul class="plain">
+        <li>Results in the terminal and in a local web UI (loopback <code>127.0.0.1</code> only).</li>
+        <li>A plain sentence per issue: "Any logged-in user can delete other users' invoices."</li>
+        <li>The exact request, the proof, and a <code>curl</code> that reproduces it on your local stack.</li>
+        <li>A fix description and a prompt for Lovable, Bolt, Cursor or Claude.</li>
+        <li>Coverage: every table it could not test, with the reason. Never "clean" when coverage is incomplete.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Deterministic by design</h2>
+      <div class="box">
+        <p>No AI decides what is a finding. The same schema gives the same result on every run, so a finding can be reproduced, argued with and closed.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot"><span>tenantbleed technical brief</span><span>1 / 2</span></footer>
+</article>
+
+<article class="sheet">
+  <header class="top"><div class="brand">tenant<span>bleed</span></div><div class="doc">Our tests</div></header>
+
+  <section class="two">
+    <div>
+      <h2>Our tests</h2>
+      <p class="muted">Every rule change is re-run against a planted test app and a corpus of open-source Supabase apps, all locally. Real projects are described by type only and told privately before any public mention.</p>
+      <div class="wrap">
+        <table>
+          <tbody>
+            <tr><td>Planted test app: known issues proven</td><td class="n">20 of 20</td></tr>
+            <tr><td>Planted test app: false positives</td><td class="n">0</td></tr>
+            <tr><td>Open-source Supabase apps scanned</td><td class="n">39</td></tr>
+            <tr><td>Apps that built and ran from their migrations</td><td class="n">31</td></tr>
+            <tr><td>Apps with real, proven bugs</td><td class="n">12</td></tr>
+            <tr><td>Tables filled with test data and attacked</td><td class="n">516 of 537</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <h2>Side by side with other tools</h2>
+      <p class="muted">18 known issues, every tool run locally on the same stacks. Proven means the tool showed a request that worked.</p>
+      <div class="bars" role="img" aria-label="Known issues proven out of 18: tenantbleed 16, every other tool 0.">
+        <div class="bar us"><span>tenantbleed</span><span class="t"><span class="f" style="width:calc(100% * 16 / 18)"></span></span><span class="v">16</span></div>
+        <div class="bar zero"><span>Supabase linter (splinter)</span><span class="t"></span><span class="v">0</span></div>
+        <div class="bar zero"><span>supabase-rls-audit-kit</span><span class="t"></span><span class="v">0</span></div>
+        <div class="bar zero"><span>supabase-rls-ab-test</span><span class="t"></span><span class="v">0</span></div>
+        <div class="bar zero"><span>Autoswagger</span><span class="t"></span><span class="v">0</span></div>
+        <div class="bar zero"><span>OWASP ZAP</span><span class="t"></span><span class="v">0</span></div>
+        <div class="bar zero"><span>Akto</span><span class="t"></span><span class="v">0</span></div>
+      </div>
+      <p class="small">Bars to scale, out of 18. Measured on an earlier tenantbleed version. Linters flagged many of these as warnings; flagging is not proof.</p>
+    </div>
+  </section>
+
+  <section class="two">
+    <div>
+      <h2>Linter triage</h2>
+      <p class="muted">tenantbleed runs Supabase's own linter on the same database and labels each data-access warning: proven, tested and not exploitable, not reachable through the API, or not tested (with the reason).</p>
+      <div class="wrap">
+        <table>
+          <thead><tr><th>App (by type)</th><th class="n">Warnings</th><th class="n">Data access</th><th class="n">Proven</th></tr></thead>
+          <tbody>
+            <tr><td>Planted test app</td><td class="n">40</td><td class="n">31</td><td class="n">18</td></tr>
+            <tr><td>App A</td><td class="n">83</td><td class="n">23</td><td class="n">14</td></tr>
+            <tr><td>App B</td><td class="n">422</td><td class="n">149</td><td class="n">17</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small" style="margin-top:2mm">Across the field test, tenantbleed also proved 106 bugs at medium or worse where neither linter named a specific problem: joining any workspace, writing into another one, creating records in another user's name.</p>
+    </div>
+    <div>
+      <h2>Tested fixes (preview)</h2>
+      <p class="muted">Fixes come from fixed templates, not AI: enable RLS with owner policies, an owner-scoped restrictive policy, a backend-only policy limited to <code>service_role</code>, <code>security_invoker</code> views, functions run as the caller, one folder per owner in storage.</p>
+      <p class="muted">Each fix is applied to a fresh copy of the database. The attacks are re-run, then the owner, a workspace member and an admin must keep all the access they had. Otherwise the fix is rejected.</p>
+      <div class="wrap">
+        <table>
+          <tbody>
+            <tr><td>Fixes that passed, in our trials</td><td class="n">24 of 24</td></tr>
+            <tr><td>Proven issues closed</td><td class="n">81 of 126</td></tr>
+            <tr><td>Left for a human, each with the reason</td><td class="n">45</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small" style="margin-top:2mm">The access check earns its place: a naive "turn RLS on" fix stops every attack and also locks owners out of their own rows. The verifier rejects it.</p>
+    </div>
+  </section>
+
+  <section class="two">
+    <div>
+      <h2>Run it locally</h2>
+<pre><span class="c"># in your project, with the local stack up</span>
+supabase start
+
+<span class="c"># headless: scan and gate on the exit code</span>
+npx tenantbleed supabase --fail-on high
+
+<span class="c"># or open the local web UI</span>
+npx tenantbleed ui</pre>
+      <p class="small" style="margin-top:2mm">Everything runs on your machine, nothing is sent off the box. The same command gates any CI on its exit code. Optional <code>tenantbleed.json</code> marks tables that are shared by design or a single-workspace app.</p>
+    </div>
+    <div>
+      <h2>Safety and limits</h2>
+      <ul class="plain">
+        <li>Runs only on local, CI or disposable preview stacks and refuses other URLs. It creates users and writes data, so never production.</li>
+        <li>Supabase today: Postgres RLS, functions, views and storage. Edge functions and Realtime are not tested yet.</li>
+        <li>Apps that keep the tenant in a JWT claim rather than in foreign keys are only partly understood.</li>
+        <li>"Tested, not exploitable" means no attack worked with the test data. It is strong evidence, not a proof of safety.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer class="foot"><span>tenantbleed technical brief</span><span>Free and open source</span></footer>
+</article>
+
+</body>
+</html>

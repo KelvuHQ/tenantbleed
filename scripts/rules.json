@@ -1,0 +1,372 @@
+{
+  "about": "Every decision the judge and the scan can make, and each outcome a planted case must produce. scripts/check-rules.mjs reads the three planted apps' reports and fails when an entry here is never produced, or when the code has a rule missing from this file. Finding variants are severity|side (side: tenant = a signed-in attacker, anon = a visitor, any = either, - = code check). Keep this in step with src/judge/*.ts.",
+  "findings": {
+    "read": [
+      "high|tenant",
+      "critical|anon"
+    ],
+    "read/view": [
+      "high|tenant",
+      "critical|anon"
+    ],
+    "read/open-policy": [
+      "medium|tenant",
+      "high|anon"
+    ],
+    "read-state": [
+      "low|tenant",
+      "medium|anon"
+    ],
+    "read-state/sensitive": [
+      "medium|tenant",
+      "high|anon"
+    ],
+    "read/open-policy-sensitive": [
+      "medium|tenant"
+    ],
+    "read/backend-only-policy": [
+      "high|tenant"
+    ],
+    "read/profile-only": [
+      "low|tenant",
+      "medium|anon"
+    ],
+    "read/declared-public": [
+      "low|any"
+    ],
+    "graphql-read": [
+      "high|tenant"
+    ],
+    "graphql-read/open-policy": [
+      "medium|tenant"
+    ],
+    "update": [
+      "high|tenant",
+      "critical|anon"
+    ],
+    "reparent": [
+      "high|tenant"
+    ],
+    "reparent/shared-parent": [
+      "low|tenant"
+    ],
+    "reparent/unseen-parent": [
+      "low|tenant"
+    ],
+    "insert": [
+      "high|tenant",
+      "critical|anon"
+    ],
+    "insert/shared-parent": [
+      "low|any"
+    ],
+    "insert/unseen-parent": [
+      "low|any"
+    ],
+    "impersonate": [
+      "medium|tenant"
+    ],
+    "impersonate/membership": [
+      "low|tenant"
+    ],
+    "rpc-leak": [
+      "high|tenant",
+      "critical|anon"
+    ],
+    "rpc-leak/profile-only": [
+      "low|tenant",
+      "medium|anon"
+    ],
+    "rpc-leak/ids-only": [
+      "low|any"
+    ],
+    "rpc-leak/derived-value": [
+      "low|tenant",
+      "low|anon"
+    ],
+    "rpc-write/change": [
+      "high|tenant",
+      "critical|anon"
+    ],
+    "rpc-write/counters": [
+      "low|any"
+    ],
+    "rpc-write/creates-in-victim": [
+      "medium|tenant",
+      "high|anon"
+    ],
+    "rpc-write/seed-defaults": [
+      "low|any"
+    ],
+    "rpc-write/scheduled-job-creates": [
+      "low|any"
+    ],
+    "rpc-write/time-based-cleanup": [
+      "low|any"
+    ],
+    "rpc-write/cache-refresh": [
+      "low|any"
+    ],
+    "rpc-write/shared-change": [
+      "medium|tenant",
+      "high|anon"
+    ],
+    "rpc-write/shared-scheduled-job": [
+      "low|any"
+    ],
+    "rpc-write/shared-recompute": [
+      "low|any"
+    ],
+    "rpc-write/shared-counters": [
+      "low|any"
+    ],
+    "metadata": [
+      "critical|tenant"
+    ],
+    "self-escalation": [
+      "critical|tenant"
+    ],
+    "self-escalation/stored": [
+      "medium|tenant"
+    ],
+    "self-enrollment": [
+      "critical|tenant"
+    ],
+    "delete": [
+      "high|tenant",
+      "critical|anon"
+    ],
+    "file-download": [
+      "high|tenant",
+      "critical|anon"
+    ],
+    "file-list": [
+      "high|tenant"
+    ],
+    "file-list/public-bucket": [
+      "low|any"
+    ],
+    "file-overwrite": [
+      "high|tenant"
+    ],
+    "file-upload": [
+      "medium|tenant"
+    ],
+    "file-upload/unseen": [
+      "low|any"
+    ],
+    "file-delete": [
+      "high|tenant"
+    ],
+    "static/rls-disabled": [
+      "high|-"
+    ],
+    "static/definer-view": [
+      "medium|-"
+    ],
+    "static/policy-always-true": [
+      "high|-",
+      "low|-"
+    ],
+    "static/policy-helper-always-true": [
+      "high|-",
+      "medium|-"
+    ],
+    "static/policy-user-metadata": [
+      "high|-"
+    ],
+    "static/auth-writer": [
+      "high|-",
+      "medium|-"
+    ],
+    "static/definer-http": [
+      "critical|-"
+    ],
+    "static/definer-vault": [
+      "high|-"
+    ],
+    "static/definer-exec-arg": [
+      "critical|-"
+    ],
+    "static/definer-security-ddl": [
+      "critical|-"
+    ],
+    "static/auth-writer-checked": [
+      "info|-"
+    ],
+    "static/definer-unchecked": [
+      "medium|-",
+      "low|-"
+    ],
+    "static/definer-checks-caller": [
+      "info|-"
+    ],
+    "static/definer-yes-no": [
+      "info|-"
+    ],
+    "static/definer-cannot-target": [
+      "info|-"
+    ],
+    "static/definer-safe-by-construction": [
+      "info|-"
+    ],
+    "static/shared-open-write": [
+      "high|-",
+      "medium|-"
+    ],
+    "static/shared-anon-read": [
+      "high|-"
+    ]
+  },
+  "modifiers": [
+    "modifier/latent",
+    "modifier/seed-only",
+    "modifier/single-workspace"
+  ],
+  "triage": [
+    "triage/proven",
+    "triage/extension",
+    "triage/function-trigger",
+    "triage/function-yes-no-helper",
+    "triage/function-unnamed-args",
+    "triage/function-owner-control-settled",
+    "triage/function-schema-risk",
+    "triage/function-secret-gated",
+    "triage/function-victim-independent",
+    "triage/function-time-maintenance",
+    "triage/function-owner-control-no-effect",
+    "triage/function-flagged",
+    "triage/function-tested",
+    "triage/function-not-served",
+    "triage/function-broken",
+    "triage/function-no-execute-right",
+    "triage/function-refused-for-everyone",
+    "triage/function-not-called",
+    "triage/function-outside-scan",
+    "triage/table-locked",
+    "triage/table-flagged-not-reached",
+    "triage/table-not-reached",
+    "triage/table-shared",
+    "triage/table-no-test-data",
+    "triage/table-not-served",
+    "triage/table-no-api-role",
+    "triage/table-flagged",
+    "triage/table-tested"
+  ],
+  "notes": {
+    "hidden-schema-wrapped": "^Schema \".*\" is not exposed, but functions the API serves use its tables",
+    "hidden-schema-unreached": "^Schema \".*\" grants table access to API roles but is not exposed",
+    "signup-refused": "^Signup refused the test users",
+    "shared-tables": "^Treated as shared",
+    "unnamed-arguments": "^Not callable through the API because their arguments have no names",
+    "graphql-on": "^GraphQL: /graphql/v1 is on",
+    "fix-check-roles": "^Fix check: .* set up through",
+    "admin-demoted": "^A test user was made .* by the app itself",
+    "permissions-granted": "^The test users' roles were given every permission",
+    "backend-write": "^Some test rows were written without a signed-in user",
+    "rules-paused": "its test rows were written with the app's own rules paused",
+    "existing-rows-as-parents": "refuses new rows .* its existing rows were used as parents",
+    "single-workspace-heads-up": "^Heads-up: .* readable by every signed-in user"
+  },
+  "untestable": {
+    "about": "Rules a planted app cannot reach, with the test that covers them instead, or the feature that exercises them.",
+    "triage/function-outside-scan": "a linter warning on a function outside the scanned schemas: covered by test/judge.test.ts (\"warnings on objects the scan never reached say so, and an unserved function is not served\")",
+    "triage/table-flagged-not-reached": "a linter warning on a table the scan never saw that the code check also flags: covered by test/judge.test.ts (\"warnings on objects the scan never reached say so, and an unserved function is not served\")",
+    "triage/table-not-reached": "a linter warning on a table the scan never saw: covered by test/judge.test.ts (\"warnings on objects the scan never reached say so, and an unserved function is not served\")",
+    "triage/function-not-served": "the linter only warns about functions in the exposed schemas, which the API serves; a 404 or 406 there depends on the API's schema cache, not on the app: covered by test/judge.test.ts (\"warnings on objects the scan never reached say so, and an unserved function is not served\")",
+    "strategy row/composite-keys": "needed when a key into a member row must agree with a second parent that only another person's row satisfies; since rows are built in required order and a shared column prefers an agreeing row, no planted shape needs it any more. Seen in one field-test app in r10; a planted shape is board item W23",
+    "strategy row/helper-parent": "same as row/composite-keys (a parent made for another person); board item W23",
+    "note fix-check-roles": "written only during fix verification (TENANTBLEED_OWNER_CHECK), exercised by scripts/verify-fixes.mjs"
+  },
+  "strategies": {
+    "about": "Test-data steps and argument strategies (src/core/trace.ts). Each id is counted in every report's trace and listed on a finding's evidence.via when its proof relied on it. The text is what a report can say about it.",
+    "row/api-insert": "The test row was created through the app's own API, as the user.",
+    "row/service-insert": "The test row was written directly in the database with the user's identity, because the API does not let users create it.",
+    "row/backend-write": "The test row was written the way the app's backend would, with no signed-in user, because the app's triggers refuse it from a user session.",
+    "row/trigger-needs-column": "A trigger copies an optional column of the row into another table that requires it, so the test row fills it (with its parent's value for that column when it has one).",
+    "row/rules-paused": "The test row was written with the table's own checks and triggers paused for that one insert; every attack still faced them.",
+    "row/check-solved": "A value the table's CHECK rules accept was worked out for the test row.",
+    "row/partition-solved": "The test row's values were chosen to fall inside a partition of the table.",
+    "row/optional-left-empty": "Optional columns a rule mentions were left empty so the test row passes the rule.",
+    "row/exclusion-shift": "The test row's dates were moved so it does not overlap another row (an exclusion rule).",
+    "row/short-markers": "The app refused the row with its own error (a code of at most 32 characters), so it was written again with short marker text that is still recognizable.",
+    "row/stand-in-person": "Another account stands in where the app refuses the user's own id (an owner cannot add themselves as a member).",
+    "row/composite-keys": "Columns that must agree across a composite key were taken from one parent row.",
+    "row/helper-parent": "A parent row for another person was created so the test row could point at it.",
+    "row/person-filled-later": "An optional person column was left empty until the user's profile row existed (the profile needed this row first), then filled in.",
+    "row/adopted-existing": "Rows the app creates on its own (at signup, by a trigger) were used as the user's test data.",
+    "row/existing-parents": "The table refuses new rows, so rows its migrations already inserted were used as parents.",
+    "check/is-null": "A CHECK required a column to be empty.",
+    "check/not-null": "A CHECK required a column to be filled.",
+    "check/parent-link": "A CHECK required a link to be filled (one of several parents): the tenant's own parent row was used.",
+    "check/boolean-false": "A CHECK required a flag to be off.",
+    "check/boolean-true": "A CHECK required a flag to be on.",
+    "check/equals-literal": "A CHECK required one exact value.",
+    "check/number-list": "A CHECK allowed only some numbers.",
+    "check/text-list": "A CHECK allowed only some words.",
+    "check/columns-differ": "A CHECK required two columns to differ.",
+    "check/number-bound": "A CHECK bounded a number.",
+    "check/date-bound": "A CHECK bounded a date.",
+    "check/not-in-list": "A CHECK excluded some values.",
+    "check/not-equal-literal": "A CHECK excluded one value.",
+    "check/column-order": "A CHECK ordered two columns (an end after its start).",
+    "check/array-length": "A CHECK bounded a list's length.",
+    "check/array-from-list": "A CHECK allowed list items from a fixed set only.",
+    "check/json-type": "A CHECK required a JSON object or array.",
+    "check/json-key": "A CHECK pinned a key of a JSON document (a fixed value, one of a list, or the row's own id), and the test row's document carries it.",
+    "check/json-array-length": "A CHECK bounded a JSON list's length.",
+    "check/regex": "A CHECK required text matching a pattern.",
+    "check/case": "A CASE rule (which columns must be filled depends on a kind) was solved as one alternative per WHEN, plus the ELSE.",
+    "value/check-list": "The value was taken from a list a CHECK allows.",
+    "value/check-number-list": "The number was taken from a list a CHECK allows.",
+    "value/check-length": "The text length was set to what a CHECK requires.",
+    "value/check-pattern": "The text was shaped to match a CHECK pattern (an email, a slug, a URL).",
+    "value/check-pattern-generated": "The text was generated from a CHECK pattern.",
+    "value/check-range": "The number was chosen inside a CHECK's range.",
+    "value/enum": "The value was taken from the column's enum type.",
+    "value/not-privileged": "Role flags (admin, staff) were set off, so the test users are ordinary users.",
+    "value/well-known-format": "A column named for a time zone, currency, country or language got a real value of that kind (UTC, USD, US, en), because the database checks it against its own list.",
+    "args/user-id": "The call used the victim's user id.",
+    "args/row-state": "The function only acts on rows in a given state (status = 'pending', delivered_at empty, a counter above zero): the victim's row was put in that state inside the rolled-back transaction before the call.",
+    "args/insert-columns": "The function inserts its arguments straight into a table's columns (an upsert of a usage counter): each argument took the victim's value for its column, the victim's parent row for a link and the victim's own row for the rest (dates and numbers too), so the write lands on the victim's data.",
+    "args/row-value-key": "A date, number or id argument the function compares to a column of the victim's row (r.revision = p_revision) took that row's value, so the call reaches that row.",
+    "args/row-parents": "Arguments the function compares to a parent of the victim's row (the event a round belongs to) took the parent's value, so ids from the row and values from its parent agree.",
+    "args/row-text-key": "A text argument the function finds rows by (month = p_month) took the value from the same victim row as the ids, so the call reaches that row.",
+    "args/compared-column": "The function body compares the argument to a column (where job_id = p_ref), so the victim's values in that column were tried first, whatever the argument is called.",
+    "args/parent-column": "The call used the id of the organization or parent the victim's rows belong to.",
+    "args/named-table": "The call used the id of the victim's row in the table the argument is named after.",
+    "args/table-in-body": "The call used the id of a victim's row in a table the function reads or writes.",
+    "args/victim-id": "The call used one of the victim's record ids.",
+    "args/victim-value": "The call used one of the victim's values.",
+    "args/row-tries": "The call's ids all came from one of the victim's rows, so they agree with each other.",
+    "args/write-marker": "Text arguments carried a fresh marker, so a write that copies them shows.",
+    "args/compared-literal": "The call used a word the function compares the argument with, so its write branch runs.",
+    "args/scope-word": "The call asked for the widest scope (all, global).",
+    "args/month": "The call asked for the current month.",
+    "args/small-amount": "The call used a small amount, so a spending limit does not refuse it.",
+    "args/large-ceiling": "The call passed a large ceiling, so a limit the caller chooses lets it through.",
+    "args/type-default": "No value of the victim's fits the argument, so a plain value of its type was used.",
+    "args/well-known-format": "An argument named for a time zone, currency, country or language got a real value of that kind, so the function ran past its first use of it.",
+    "args/blank-id-compare": "The function answered with a number or a word, so the same call was made with an id that exists nowhere: a different, stable answer showed it read the other user's records.",
+    "args/excluded-id": "An argument naming a user to leave out (exclude, except, skip) got an id that belongs to nobody, so the victim was not the one left out.",
+    "owner-control/changed": "The same call made by the owner changed their own data.",
+    "owner-control/returned": "The same call made by the owner returned their own data.",
+    "owner-control/accepted": "The same call was accepted for the owner and refused for another user.",
+    "owner-control/got-further": "The same call got past the caller check for the owner and stopped later; another user was stopped at the check.",
+    "owner-control/row-state": "The function only acts on rows in a given state (status = 'pending', a counter above zero); with the victim's row put in that state inside a rolled-back transaction, the owner's call changed it and another user's identical call did not.",
+    "owner-control/victim-removal": "The function takes nothing that points at the victim; the attacker's answer, computed in a rolled-back transaction, changed once the victim's rows were left out, so it reveals something about them.",
+    "owner-control/victim-independent": "The function takes nothing that points at the victim, and the attacker's answer was the same with and without the victim's rows (checked in a rolled-back transaction), so it does not depend on their data.",
+    "owner-control/secret-gated": "The function looks things up by a secret value; another user calling with the victim's stored value got the answer, and with any other value nothing, so the value is the only gate.",
+    "owner-control/no-effect": "The same call did nothing for the owner either: the test values did not reach the function's data.",
+    "world/admin-demoted": "The app made a test user an admin (the first signup); the scan set it back.",
+    "world/permissions-granted": "The test users' roles were given every permission of their own organization.",
+    "world/membership-claims-parent": "A membership row (organization, user) made the organization the user's.",
+    "world/membership-claims-parent-unique": "A membership with its own id and a unique (organization, user) pair made the organization the user's.",
+    "world/hidden-schema": "Tables in a schema the API does not serve were filled, because functions it serves use them.",
+    "world/users-created-directly": "Signup refused the test users, so they were created directly in the database.",
+    "world/session-signed-locally": "Email login is off, so the test users' sessions were signed with the local secret.",
+    "world/shared-table": "A table with no path to a user was treated as shared, not anyone's data.",
+    "world/cron-paused": "The app's scheduled jobs (pg_cron) were paused while the scan ran and turned back on afterwards, so none could change the test data or send requests during it.",
+    "value/unique-default-filled": "A unique text column with a constant default ('' or 'draft') was filled with a marker instead of its default, so the two tenants' rows do not collide on the unique key."
+  }
+}
